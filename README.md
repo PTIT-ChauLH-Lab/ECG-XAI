@@ -16,52 +16,53 @@ All installation is created in .ipynb file
 # Installation
 Add WFDB_PTBXL/PTB_XL in root folder  similar to
 
-- ECGXAI/
-  - ecgxai/
-  - ...
-  - examples/
-  - WFDB_PTBXL/
-    - PTB_XL (after extract)/
-      - HR00001.hea
-      - HR00001.mat
-      - HR00002.hea
-      - HR00002.mat
-      - HR00003.hea
-      - HR00003.mat
-      - HR00004.hea
-      - HR00004.mat
-    - PTB_XL.zip (after download)
-      # ... (các tệp khác tương tự)
-  - .gitignore
-  - LICENCE
-  - README.md
-  -  ...
+ECGXAI/
+├── ecgxai/
+├── ...
+├── examples/
+├── WFDB_PTBXL/
+│   ├── PTB_XL (after extract)/
+│   │   ├── HR00001.hea
+│   │   ├── HR00001.mat
+│   │   ├── HR00002.hea
+│   │   ├── HR00002.mat
+│   │   ├── HR00003.hea
+│   │   ├── HR00003.mat
+│   │   ├── HR00004.hea
+│   │   └── HR00004.mat
+│   └── PTB_XL.zip (after download)
+│       └── ... (các tệp khác tương tự)
+├── .gitignore
+├── LICENCE
+├── README.md
+└── ...
 
 Data WFDB is taken from https://www.kaggle.com/datasets/bjoernjostein/ptbxl-electrocardiography-database
 After using `examples/classification/multi_classification_example_ptbxl.ipynb` it creates 1 new folder called `extracted` which contains data after processing, and `header_info`
-which contains actual data. Tree structure should look like
+which contains actual data. Tree structure should look like this after download and run .ipynb file
 
-- ECGXAI/
-  - ecgxai/
-  - ...
-  - examples/
-  - WFDB_PTBXL/
-    - extracted/
-    - PTB_XL (after extract)/
-      - HR00001.hea
-      - HR00001.mat
-      - HR00002.hea
-      - HR00002.mat
-      - HR00003.hea
-      - HR00003.mat
-      - HR00004.hea
-      - HR00004.mat
-    - header_info.csv
-    - PTB_XL.zip (after download)
-  - .gitignore
-  - LICENCE
-  - README.md
-  -  ...
+ECGXAI/
+├── ecgxai/
+├── ...
+├── examples/
+├── WFDB_PTBXL/
+│   ├── extracted/
+│   ├── PTB_XL (after extract)/
+│   │   ├── HR00001.hea
+│   │   ├── HR00001.mat
+│   │   ├── HR00002.hea
+│   │   ├── HR00002.mat
+│   │   ├── HR00003.hea
+│   │   ├── HR00003.mat
+│   │   ├── HR00004.hea
+│   │   └── HR00004.mat
+│   ├── header_info.csv
+│   └── PTB_XL.zip (after download)
+├── .gitignore
+├── LICENCE
+├── README.md
+└── ...
+
 
 ## Description   
 This repository accompanies papers from the *Explainable AI for the ECG (ECGxAI)* research group at the [UMC Utrecht](https://www.umcutrecht.nl/nl) and contains an installable python package to train and evaluate explainable deep learning methods for the analysis of (12-lead) electrocardiograms (ECGs). The package is based on [Pytorch Lightning](https://www.pytorchlightning.ai/), is work-in-progress and new functionalities will be added along the way.
