@@ -16,6 +16,7 @@ from torchvision.transforms import Compose
 from torchvision.datasets.utils import download_url
 from tqdm import tqdm
 import subprocess
+import shutil
 
 
 class DatasetBase(Dataset):
@@ -439,29 +440,24 @@ class PhysioNetDataset(UniversalECGDataset):
     def convert_to_numpy(self, df, path):
         for filename in tqdm(df['Filename']):
             file_path = PhysioNetDataset.split_to_path(filename, steps=3)
-            if not os.path.exists(os.path.join(path, file_path, f'{filename}.npy')):
-                data = io.loadmat(os.path.join(path, file_path, f'{filename}.mat',))['val']
-                np.save(os.path.join(path, file_path, f'{filename}.npy'), data)
+            root_dir = os.path.dirname(self.from_path)
+            if not os.path.exists(os.path.join(root_dir,'extracted', file_path, f'{filename}.npy')):
+                data = io.loadmat(os.path.join(root_dir, 'extracted', file_path, f'{filename}.mat',))['val']
+                np.save(os.path.join(root_dir, 'extracted', file_path, f'{filename}.npy'), data)
 
     def extract_archive(
         self,
         remove_finished: bool = False,
     ):
+
         if self.to_path is None:
             self.to_path = os.path.dirname(self.from_path)
-
-        print("Now extracting data from tar archive, this may take a while...")
-
-        process = subprocess.Popen(f'tar zxf {self.from_path} -C {self.to_path}', shell=True)
-        process.wait()
-
-        print(f"Done extracting - exit code = {process.returncode}")
+    
 
         print("Now extracting header info and moving files")
         header_info = []
-
-        for file in os.listdir(f'{self.to_path}/{self.archive_root}'):
-            full_file_path = f'{self.to_path}/{self.archive_root}/{file}'
+        for file in os.listdir(f'{self.from_path}'):
+            full_file_path = f'{self.from_path}/{file}'
             file_id, ftype = file.split('.')
 
             # Only read header files, extract raw data in header file is found
@@ -470,15 +466,15 @@ class PhysioNetDataset(UniversalECGDataset):
                     # Get header info from header file
                     header_info.append(self.extract_header_info(extracted.readlines(), file_id))
 
-                mat_file_name = f'{self.to_path}/{self.archive_root}/{file_id}.mat'
-
+                mat_file_name = f'{self.from_path}/{file_id}.mat'
+                
                 # Create folder structure for raw data
                 file_path = PhysioNetDataset.split_to_path(file_id, steps=3)
-                f_to_path = os.path.join(self.to_path, file_path)
-
+                f_to_path = os.path.join(self.to_path,'extracted', file_path)
+                os.makedirs(f_to_path, exist_ok=True)
                 # Move files
-                os.renames(mat_file_name, os.path.join(f_to_path, f'{file_id}.mat'))
-                os.renames(full_file_path, os.path.join(f_to_path, f'{file_id}.hea'))
+                shutil.copy2(mat_file_name, os.path.join(f_to_path, f'{file_id}.mat'))
+                shutil.copy2(full_file_path, os.path.join(f_to_path, f'{file_id}.hea'))
 
         header_df = pd.DataFrame(header_info)
         header_df.to_csv(f"{self.to_path}/header_info.csv")
@@ -490,35 +486,27 @@ class PhysioNetDataset(UniversalECGDataset):
 
 
 class PTBXLDataset(PhysioNetDataset):
-    def __init__(self, path : str = "./PTB_XL", download : bool = True, use_numpy: bool = True, *args, **kwargs):
-        self.download = download
+    def __init__(self, path : str, download : bool = True, use_numpy: bool = True, *args, **kwargs):
         self.use_numpy = use_numpy
 
-        if download:
-            download_url(
-                'https://storage.googleapis.com/physionetchallenge2021-public-datasets/WFDB_PTBXL.tar.gz', 
-                path, 
-                filename='PTB_XL.tar.gz',
-                md5='55e8a5c25eadfeff4fcd38f5bbf3cb13'
-            )
-
-        self.archive_root = 'WFDB_PTBXL'
-        self.from_path = f'{path}/PTB_XL.tar.gz'
+        # self.archive_root = 'PTB_XL'
+        self.from_path = f'{path}' 
         self.to_path = None
+        rootdir = os.path.dirname(self.from_path)
 
         # Assume extraction was done correctly if header_info csv exists
         # TODO, is this enough? 
-        if not os.path.exists(f"{path}/header_info.csv"):
+        if not os.path.exists(f"{rootdir}/header_info.csv"):
             self.extract_archive()
 
-        df = pd.read_csv(f"{path}/header_info.csv")
+        df = pd.read_csv(f"{rootdir}/header_info.csv")
 
         if use_numpy:
             self.convert_to_numpy(df, path)
 
         super(PTBXLDataset, self).__init__(
             dataset_function='physionet_numpy' if use_numpy else 'physionet',
-            waveform_dir=path,
+            waveform_dir=os.path.join(rootdir, 'extracted'),
             dataset=df,
             *args,
             **kwargs

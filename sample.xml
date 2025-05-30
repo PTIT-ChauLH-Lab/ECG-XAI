@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MUSE_ECG>
+  <RestingECG>
+    <Demographics>
+      <PatientID>123456</PatientID>
+      <LastName>Nguyen</LastName>
+      <FirstName>Van A</FirstName>
+      <Sex>M</Sex>
+      <Age>45</Age>
+    </Demographics>
+    <Order>
+      <ECGDate>2025-05-07</ECGDate>
+      <ECGTime>14:22:00</ECGTime>
+    </Order>
+    <Measurements>
+      <HeartRate Units="bpm">72</HeartRate>
+      <PRInterval Units="ms">160</PRInterval>
+      <QRSDuration Units="ms">98</QRSDuration>
+      <QTInterval Units="ms">390</QTInterval>
+      <QTC Units="ms">410</QTC>
+      <PAxis Units="deg">55</PAxis>
+      <RAxis Units="deg">60</RAxis>
+      <TAxis Units="deg">40</TAxis>
+    </Measurements>
+    <Interpretation>
+      <Statement>Normal sinus rhythm</Statement>
+      <Statement>Within normal limits</Statement>
+    </Interpretation>
+    <Waveform>
+      <Lead Number="1" Name="I">
+        <SampleBase64>AD8APwBAAEAAQQBCAEEAQwBDAEQARQBF</SampleBase64>
+      </Lead>
+      <Lead Number="2" Name="II">
+        <SampleBase64>AGQAZABkAGUAZgBlAGYAZwBoAGkAaQ==</SampleBase64>
+      </Lead>
+      <!-- Các chuyển đạo còn lại III, aVR, aVL, aVF, V1-V6 -->
+    </Waveform>
+  </RestingECG>
+</MUSE_ECG>

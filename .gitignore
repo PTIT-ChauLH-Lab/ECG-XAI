@@ -132,3 +132,5 @@ dmypy.json
 neptune_token.txt
 checkpoints
 lightning_logs
+
+WFDB_PTBXL/
